@@ -19,7 +19,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200 divide-solid">
-                    <tr v-for="post in posts">
+                    <tr v-for="post in posts.data">
                         <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-900">
                             {{ post.id }}
                         </td>
@@ -35,12 +35,15 @@
                     </tr>
                 </tbody>
             </table>
+
+            <TailwindPagination :data="posts" @pagination-change-page="getPosts" class="mt-4" />
         </div>
     </div>
 </template>
 
 <script setup>
 import { onMounted } from "vue";
+import { TailwindPagination } from 'laravel-vue-pagination';
 import usePosts from "@/composables/posts";
 
 const { posts, getPosts } = usePosts()
