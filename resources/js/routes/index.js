@@ -8,8 +8,18 @@ import PostsCreate from '@/components/Posts/Create.vue'
 import PostsEdit from '@/components/Posts/Edit.vue'
 import Login from '@/components/Auth/Login.vue';
 
+function auth(to, from, next) {
+    if (JSON.parse(localStorage.getItem('loggedIn'))) {
+        next()
+    }
+
+    next('/login')
+}
+
 const routes = [
     {
+        path: '/',
+        redirect: { name: 'login' },
         component: GuestLayout,
         children: [
             {
@@ -21,6 +31,7 @@ const routes = [
     },
     {
         component: AuthenticatedLayout,
+        beforeEnter: auth,
         children: [
             {
                 path: '/posts',
