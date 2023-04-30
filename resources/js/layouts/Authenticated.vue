@@ -24,6 +24,21 @@
                             </router-link>
                         </div>
                     </div>
+                    <div class="flex items-center">
+                        <div class="flex">
+                            <div>
+                                <div>Hi, {{ user.name }}</div>
+                                <div class="text-sm text-gray-500">{{ user.email }}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <button @click="logout" type="button" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:shadow-outline-gray transition ease-in-out duration-150 ml-4"
+                                    :class="{ 'opacity-25': processing }"
+                                    :disabled="processing">
+                                Log out
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -55,8 +70,10 @@
 <script setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router'
+import useAuth from '@/composables/auth';
 
 const route = useRoute()
+const { user, processing, logout } = useAuth()
 
 const currentPageTitle = computed(() => route.meta.title)
 </script>
