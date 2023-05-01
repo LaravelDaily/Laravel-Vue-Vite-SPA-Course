@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Post;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PostResource;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StorePostRequest;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -50,6 +51,8 @@ class PostController extends Controller
 
     public function store(StorePostRequest $request)
     {
+        $this->authorize('posts.create');
+
         if ($request->hasFile('thumbnail')) {
             $filename = $request->file('thumbnail')->getClientOriginalName();
             info($filename);
@@ -61,6 +64,8 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
+        $this->authorize('posts.update');
+
         return new PostResource($post);
     }
 
@@ -73,6 +78,8 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
+        $this->authorize('posts.delete');
+
         $post->delete();
 
         return response()->noContent();
