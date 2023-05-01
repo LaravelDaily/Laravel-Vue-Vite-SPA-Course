@@ -1,5 +1,7 @@
 import { ref, reactive, inject } from 'vue'
 import { useRouter } from 'vue-router';
+import { AbilityBuilder, Ability } from '@casl/ability';
+import { ABILITY_TOKEN } from '@casl/vue';
 
 const user = reactive({
     name: '',
@@ -11,6 +13,7 @@ export default function useAuth() {
     const validationErrors = ref({})
     const router = useRouter()
     const swal = inject('$swal')
+    const ability = inject(ABILITY_TOKEN)
     const loginForm = reactive({
         email: '',
         password: '',
@@ -37,12 +40,13 @@ export default function useAuth() {
             .finally(() => processing.value = false)
     }
 
-    const loginUser = (response) => {
+    const loginUser = async (response) => {
         user.name = response.data.name
         user.email = response.data.email
 
         localStorage.setItem('loggedIn', JSON.stringify(true))
-        router.push({ name: 'posts.index' })
+        await getAbilities()
+        await router.push({ name: 'posts.index' })
     }
 
     const getUser = () => {
@@ -71,5 +75,26 @@ export default function useAuth() {
             })
     }
 
-    return { loginForm, validationErrors, processing, submitLogin, user, getUser, logout }
+    const getAbilities = async() => {
+        axios.get('/api/abilities')
+            .then(response => {
+                const permissions = response.data
+                const { can, rules } = new AbilityBuilder(Ability)
+
+                can(permissions)
+
+                ability.update(rules)
+            })
+    }
+
+    return {
+        loginForm,
+        validationErrors,
+        processing,
+        submitLogin,
+        user,
+        getUser,
+        logout,
+        getAbilities
+    }
 }
