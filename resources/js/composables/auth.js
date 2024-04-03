@@ -30,7 +30,7 @@ export default function useAuth() {
             .then(async response => {
                 user.name = response.data.name
                 user.email = response.data.email
-                loginUser(response)
+                await loginUser(response)
             })
             .catch(error => {
                 if (error.response?.data) {
