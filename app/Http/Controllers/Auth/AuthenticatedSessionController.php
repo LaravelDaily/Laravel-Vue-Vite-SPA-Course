@@ -35,7 +35,7 @@ class AuthenticatedSessionController extends Controller
             return response()->json($request->user());
         }
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return redirect()->intended();
     }
 
     /**

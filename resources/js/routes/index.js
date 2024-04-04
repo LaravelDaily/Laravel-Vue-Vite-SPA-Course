@@ -31,7 +31,7 @@ const routes = [
     },
     {
         component: AuthenticatedLayout,
-        beforeEnter: auth,
+        // beforeEnter: auth,
         children: [
             {
                 path: '/posts',

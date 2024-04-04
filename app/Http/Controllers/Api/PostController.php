@@ -36,12 +36,11 @@ class PostController extends Controller
                 $query->where('content', 'like', '%' . request('search_content') . '%');
             })
             ->when(request('search_global'), function (Builder $query) {
-                $query->where(function(Builder $q) {
-                    $q->where('id', request('search_global'))
-                        ->orWhere('title', 'like', '%' . request('search_global') . '%')
-                        ->orWhere('content', 'like', '%' . request('search_global') . '%');
-
-                });
+                $query->whereAny([
+                        'id',
+                        'title',
+                        'content',
+                    ], 'LIKE', '%' . request('search_global') . '%');
             })
             ->orderBy($orderColumn, $orderDirection)
             ->paginate(10);
@@ -51,7 +50,7 @@ class PostController extends Controller
 
     public function store(StorePostRequest $request)
     {
-        $this->authorize('posts.create');
+        Gate::authorize('posts.create');
 
         if ($request->hasFile('thumbnail')) {
             $filename = $request->file('thumbnail')->getClientOriginalName();
@@ -64,13 +63,15 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
-        $this->authorize('posts.update');
+        Gate::authorize('posts.update');
 
         return new PostResource($post);
     }
 
     public function update(Post $post, StorePostRequest $request)
     {
+        Gate::authorize('posts.update');
+
         $post->update($request->validated());
 
         return new PostResource($post);
@@ -78,7 +79,7 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
-        $this->authorize('posts.delete');
+        Gate::authorize('posts.delete');
 
         $post->delete();
 
